@@ -49,6 +49,7 @@ object Dependencies {
     const val multidex = "androidx.multidex:multidex:2.0.1"
     const val datastorePrefs = "androidx.datastore:datastore-preferences:1.0.0-beta01"
     const val gridLayout = "androidx.gridlayout:gridlayout:1.0.0" // Grid layout for lower API levels
+    const val splashScreen = "androidx.core:core-splashscreen:1.0.0"
 
     object Lifecycle {
       private const val version = "2.4.0"

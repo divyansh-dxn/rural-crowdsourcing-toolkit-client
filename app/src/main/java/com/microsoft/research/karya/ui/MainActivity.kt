@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.microsoft.research.karya.data.manager.AuthManager
 import com.microsoft.research.karya.databinding.ActivityMainBinding
 import com.microsoft.research.karya.utils.extensions.viewBinding
@@ -22,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var authManager: AuthManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
     }

@@ -108,6 +108,7 @@ dependencies {
     implementation(Dependencies.AndroidX.work_runtime)
     implementation(Dependencies.AndroidX.work_multiprocess)
     implementation(Dependencies.AndroidX.gridLayout)
+    implementation(Dependencies.AndroidX.splashScreen)
 
     implementation(Dependencies.AndroidX.Lifecycle.common)
     implementation(Dependencies.AndroidX.Lifecycle.extensions)
