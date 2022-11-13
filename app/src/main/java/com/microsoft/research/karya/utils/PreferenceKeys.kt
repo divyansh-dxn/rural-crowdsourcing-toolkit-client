@@ -15,4 +15,5 @@ object PreferenceKeys {
     const val WORKER_ACCOUNT_ID = "worker_account_id"
     const val BASE_URL = "base_url"
     const val IS_FIRST_SYNC = "is_first_sync"
+    const val CURRENT_USER_ID = "current_user_id"
 }

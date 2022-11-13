@@ -26,11 +26,16 @@ class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val action = activity?.intent?.action
         navController = findNavController()
-        handleNavigation()
-        observeEffects()
 
-        viewModel.navigate()
+        if (action == "com.microsoft.research.karya.ACTION_NEW_PROFILE") {
+            navigateToAccessCodeFlow()
+        } else {
+            handleNavigation()
+            observeEffects()
+            viewModel.navigate()
+        }
     }
 
     private fun handleNavigation() {

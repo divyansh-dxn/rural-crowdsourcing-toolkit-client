@@ -29,6 +29,8 @@ constructor(
     private val _accessCodeEffects: MutableSharedFlow<AccessCodeEffects> = MutableSharedFlow()
     val accessCodeEffects = _accessCodeEffects.asSharedFlow()
 
+    suspend fun getLoggedInWorker() = authManager.getLoggedInWorker()
+
     fun checkAccessCode(accessCode: String) {
         workerRepository
             .verifyAccessCode(accessCode)

@@ -4,18 +4,22 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.microsoft.research.karya.BuildConfig
 import com.microsoft.research.karya.R
 import com.microsoft.research.karya.databinding.FragmentHomeScreenBinding
 import com.microsoft.research.karya.ui.base.BaseFragment
-import com.microsoft.research.karya.utils.extensions.gone
-import com.microsoft.research.karya.utils.extensions.observe
-import com.microsoft.research.karya.utils.extensions.viewBinding
-import com.microsoft.research.karya.utils.extensions.visible
+import com.microsoft.research.karya.utils.PreferenceKeys
+import com.microsoft.research.karya.utils.extensions.*
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class HomeScreenFragment : BaseFragment(R.layout.fragment_home_screen) {
@@ -39,6 +43,41 @@ class HomeScreenFragment : BaseFragment(R.layout.fragment_home_screen) {
 
     private fun setupViews() {
         with(binding) {
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                val dataStore = requireContext().dataStore
+                val profileKey = stringPreferencesKey(PreferenceKeys.CURRENT_USER_ID)
+                val userId = withContext(Dispatchers.IO) { dataStore.data.first()[profileKey] }
+                userId?.let {
+                    appTb.setTitle(it)
+                }
+            }
+
+            binding.appTb.setKaryaLogoClickListener {
+                val singleItems = arrayOf("Divyansh", "Add new profile")
+                var checkedItem = 1
+
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Change user profile")
+                    .setNeutralButton("Cancel") { dialog, which ->
+                        // Respond to neutral button press
+                    }
+                    .setPositiveButton("Confirm") { dialog, which ->
+                        if (checkedItem == singleItems.size - 1) {
+                            // last item means add new user
+                            addNewUserProfile()
+                        } else {
+                            updateUserProfile(singleItems[checkedItem])
+                        }
+                    }
+                    // Single-choice items (initialized with checked item)
+                    .setSingleChoiceItems(singleItems, checkedItem) { dialog, which ->
+                        // Respond to item chosen
+                        checkedItem = which
+                    }
+                    .show()
+            }
+
             // Move to profile on name click
             nameCv.setOnClickListener {
                 val action = HomeScreenFragmentDirections.actionHomeScreenToProfile()

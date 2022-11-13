@@ -110,6 +110,13 @@ class KaryaToolbar : Toolbar {
         }
     }
 
+    fun setKaryaLogoClickListener(onClick: () -> Unit) {
+        binding.karyaLogo.apply {
+            visible()
+            setOnClickListener { onClick() }
+        }
+    }
+
     private fun showUpdateLanguageDialog(context: Context) {
         val languageDialog = inflate(context, R.layout.dialog_update_language, null)
         val dialogBuilder = AlertDialog.Builder(context)

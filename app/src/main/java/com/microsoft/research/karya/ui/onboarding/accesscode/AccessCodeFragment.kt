@@ -3,6 +3,8 @@ package com.microsoft.research.karya.ui.onboarding.accesscode
 import android.os.Bundle
 import android.view.View
 import androidx.core.widget.doAfterTextChanged
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -10,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.microsoft.research.karya.R
 import com.microsoft.research.karya.databinding.FragmentAccessCodeBinding
 import com.microsoft.research.karya.ui.MainActivity
+import com.microsoft.research.karya.utils.PreferenceKeys
 import com.microsoft.research.karya.utils.extensions.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -69,7 +72,9 @@ class AccessCodeFragment : Fragment(R.layout.fragment_access_code) {
     private fun observeUi() {
         viewModel.accessCodeUiState.observe(viewLifecycle, viewLifecycleScope) { state ->
             when (state) {
-                is AccessCodeUiState.Success -> showSuccessUi(state.languageCode)
+                is AccessCodeUiState.Success -> viewLifecycleOwner.lifecycleScope.launch {
+                    showSuccessUi(state.languageCode)
+                }
                 is AccessCodeUiState.Error -> showErrorUi()
                 AccessCodeUiState.Initial -> showInitialUi()
                 AccessCodeUiState.Loading -> showLoadingUi()
@@ -89,10 +94,15 @@ class AccessCodeFragment : Fragment(R.layout.fragment_access_code) {
         findNavController().navigate(R.id.action_accessCodeFragment_to_fileDownloadFragment)
     }
 
-    private fun showSuccessUi(languageCode: String) {
+    private suspend fun showSuccessUi(languageCode: String) {
         updateActivityLanguage(languageCode)
         hideLoading()
         hideError()
+        // store the logged in user in currentUser
+        val accessCode = viewModel.getLoggedInWorker().accessCode
+        val dataStore = requireContext().dataStore
+        val profileKey = stringPreferencesKey(PreferenceKeys.CURRENT_USER_ID)
+        dataStore.edit { pref -> pref[profileKey] = accessCode }
         enableDoneButton()
     }
 
